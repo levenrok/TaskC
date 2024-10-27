@@ -3,7 +3,7 @@ BIN=$(BUILD_DIR)/taskc
 CC=clang
 STD=c11
 
-CFLAGS=-g -Wall -Wpedantic
+CFLAGS=-g -Wall -Wpedantic -I$(INCLUDE_DIR)
 
 LDFLAGS=-g
 LDLIBS=-lsqlite3
@@ -14,6 +14,7 @@ OBJS=$(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Directories
 SRC_DIR=src
+INCLUDE_DIR=include
 BUILD_DIR=build
 OBJ_DIR=$(BUILD_DIR)/obj
 

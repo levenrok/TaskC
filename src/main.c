@@ -3,18 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "include/db_func.h"
+
 #define noOptions 4
 
 char* options[noOptions] = {"1. Show all tasks", "2. Add task", "3. Delete task", "4. Exit"};
-int rc = 0;
-char* err_msg = NULL;
-
-int retrive_tasks(sqlite3* db);
-int print_task(void* arg, int argc, char** argv, char** arColName);
-int insert_task(sqlite3* db, char* title);
-int delete_task(sqlite3* db, int id);
-
-enum ErrNo { EXEC_OK, DBE_ACCESS, DBE_CREATE, DBE_RETRIVE, DBE_INSERT, DBE_DELETE };
 
 int main(void) {
     sqlite3* db = NULL;
@@ -23,6 +16,9 @@ int main(void) {
     int option = 0;
     char title[256];
     int deleteId = 0;
+
+    int rc = 0;
+    char* err_msg = NULL;
 
     rc = sqlite3_open("tasks.db", &db);
     if (rc != SQLITE_OK) {
@@ -109,69 +105,10 @@ int main(void) {
 
             case 4:
                 sqlite3_close(db);
-                exit(EXEC_OK);
+                exit(EXIT_SUCCESS);
 
             default:
                 break;
         }
     }
-}
-
-int retrive_tasks(sqlite3* db) {
-    char* sql = "SELECT Id, Title FROM Tasks WHERE Done = False;";
-
-    rc = sqlite3_exec(db, sql, print_task, 0, &err_msg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Error retriving tasks: %s\n", err_msg);
-
-        sqlite3_free(err_msg);
-        return DBE_RETRIVE;
-    }
-
-    return EXEC_OK;
-}
-
-int print_task(void* arg, int argc, char** argv, char** arColName) {
-    for (int i = 0; i < argc; i++) {
-        printf("%s\t", arColName[i]);
-    }
-    printf("\n");
-    printf("__\t_____\n");
-    for (int j = 0; j < argc; j++) {
-        printf("%s\t", argv[j] ? argv[j] : NULL);
-    }
-    printf("\n");
-    printf("\n");
-
-    return EXEC_OK;
-}
-
-int insert_task(sqlite3* db, char* title) {
-    char sql[256];
-    sprintf(sql, "INSERT INTO Tasks(Title, Done) VALUES ('%s', FALSE);", title);
-
-    rc = sqlite3_exec(db, sql, print_task, 0, &err_msg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Error inserting task: %s\n", err_msg);
-
-        sqlite3_free(err_msg);
-        return DBE_INSERT;
-    }
-
-    return EXEC_OK;
-}
-
-int delete_task(sqlite3* db, int id) {
-    char sql[256];
-    sprintf(sql, "DELETE FROM Tasks WHERE Id=%d;", id);
-
-    rc = sqlite3_exec(db, sql, print_task, 0, &err_msg);
-    if (rc != SQLITE_OK) {
-        fprintf(stderr, "Error deleting task: %s\n", err_msg);
-
-        sqlite3_free(err_msg);
-        return DBE_DELETE;
-    }
-
-    return EXEC_OK;
 }
