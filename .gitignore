@@ -1,0 +1,8 @@
+# IDE files
+.vscode/
+
+# Build artifacts
+build/
+
+# Database file
+tasks.db
