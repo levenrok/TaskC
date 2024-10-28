@@ -2,6 +2,8 @@
 
 TaskC is a command-line task management application built with C and SQLite. It provides a simple interface to add, view, and delete tasks, making it easier to manage your productivity from the terminal.
 
+![TaskC Interface](docs/program.png)
+
 ## Features
 
 - **Show all tasks**: View a list of tasks that are yet to be completed.
